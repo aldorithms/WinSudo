@@ -3,31 +3,23 @@
 
 #include <iostream>
 #include <string>
+#include <windows.h>
 
 int main(int argc, char* argv[]) 
 {
-    // Build the PowerShell command to run with elevated privileges
-    std::string command = "powershell -Command \"";
+    std::string start_process_str 
+        = "powershell -Command \"Start-Process powershell -Verb RunAs -ArgumentList ";
+
+    std::string arg_str;
+
+    // Loop through each argument and append it to the arg_str string
     for (int i = 1; i < argc; i++) 
     {
-        command += std::string(argv[i]) + " ";
+        arg_str += std::string(argv[i]) + "\"";
     }
-    command += "\"";
 
-    // Run the PowerShell command with elevated privileges using the "runas" verb
-    std::string sudo_command 
-        = "runas /user:Administrator " + command;
-
-    int result 
-        = system(sudo_command.c_str());
-
-    // Check the result of the PowerShell command
-    if (result == 0) {
-        std::cout << "Command completed successfully." << std::endl;
-    }
-    else {
-        std::cerr << "Error running command." << std::endl;
-    }
+    // Execute the command string using the system() function
+    system((start_process_str + arg_str).c_str());
 
     return 0;
 }
